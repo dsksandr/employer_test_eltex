@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const characters = [
+            ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'],
+            ['+', '-', '_', '$', '~'],
+            [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        ];
+
+        const [EN, symbols, numbers] = characters;
+
+        const exclusion = ['C', 'P', 'S', 'X'];
+
+        function enterNum(message, length = null) {
+            const result = prompt(message, 0);
+
+            if (result === '-1') throw new Error('Stopped!');
+
+            if (length !== null && result.toString().length > length) {
+                showAlert(result);
+                return enterNum(message, length);
+            }
+
+            if (!Number.isInteger(+result)) {
+                showAlert(result);
+                return enterNum(message, length);
+            } else {
+                return +result;
+            }
+        }
+
+        function enterChtr(message, arr) {
+            const result = prompt(message, arr[0]);
+
+            if (result === '-1') throw new Error('Stopped!');
+
+            if (
+                arr.indexOf(result.toUpperCase()) === -1 ||
+                result.toString().length > 1
+            ) {
+                showAlert(result);
+                return enterChtr(message, arr);
+            } else {
+                return result;
+            }
+        }
+
+        function showAlert(chtr) {
+            alert(`Полученное значение (${chtr}) не подходит условию`);
+        }
+
+        function getRndmNum(max) {
+            return Math.floor(Math.random() * max)
+        }
+
+        function getChtr(arr) {
+            const i = getRndmNum(arr.length);
+            const j = getRndmNum(arr[i].length);
+
+            return arr[i][j];
+        }
+
+        function replaceChtrs(rndmArr, initChtrs, chtr) {
+
+            let replaceCount = 0;
+
+            for (let i = 0; i < rndmArr.length; i++) {
+
+                if (initChtrs.indexOf(rndmArr[i]) !== -1) {
+                    rndmArr[i] = chtr;
+                    replaceCount++;
+                }
+            }
+
+            return { replaceCount, rndmArr };
+        }
+
+        const initNum = enterNum('Введите целое число. -1 для выхода');
+
+        const rndmArr = [];
+
+        for (let i = 0; i < initNum; i++) {
+
+            const chtr = getChtr(characters);
+
+            if (exclusion.indexOf(chtr) !== -1) {
+                i--;
+                continue;
+            }
+
+            rndmArr.push(chtr);
+        }
+
+        console.log('rndmStr:', rndmArr.join(''));
+        console.log('rndmStr length:', rndmArr.length);
+
+        if (rndmArr.length > 0) {
+
+            const chtr1 = enterChtr( 'Введите букву (a-z). -1 для выхода', EN);
+
+            console.log('chtr1:', chtr1);
+
+            const {
+                replaceCount: chtrReplace,
+                rndmArr: chtrReplacedArr
+            } = replaceChtrs(rndmArr, EN, chtr1);
+
+            console.log('rndmStr:', chtrReplacedArr.join(''));
+            console.log('chtrs replaced:', chtrReplace);
+
+            const chtr2 = enterNum('Введите цифру (0-9). -1 для выхода', 1);
+
+            const {
+                replaceCount: numReplace,
+                rndmArr: numReplacedArr
+            } = replaceChtrs(chtrReplacedArr, numbers, chtr2);
+
+            console.log('rndmStr:', numReplacedArr.join(''));
+            console.log('chtrs replaced:', numReplace);
+
+            console.log('not replaced:', rndmArr.length - numReplace - chtrReplace);
+        }
+
+    </script>
+</body>
+
+</html>
